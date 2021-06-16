@@ -27,7 +27,7 @@ namespace Generator
 
         //this will give us some control over the maps and give us the exact same outcome if the same seed is used. 
         private string seed = "cats are great 12345";
-        private bool useRandomSeed = false;
+        private bool useRandomSeed = true;
 
         System.Random generateSeed()
         {
@@ -202,6 +202,13 @@ namespace Generator
         // Update is called once per frame
         void Update()
         {
+            if(Input.GetMouseButtonDown(0))
+            {
+                mapGeneration();
+                System.Random rng = generateSeed();
+                fillMap(rng);
+                repeatFunction(transitionThroughMap, tranferMapData);
+            }
 
         }
     }
