@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Node;
 
 //Next step is to connect the caverns. 
 namespace Generator
@@ -42,7 +43,7 @@ namespace Generator
         }
 
         //This integer allows me to adjust the percentage of the map that is filled by walls
-        private int randomFillPercent = 50;
+        private int randomFillPercent = 45;
         //this uses the informaiton from seed to fill the map appropriately. 
         void fillMap(System.Random rng)
         {
@@ -65,14 +66,14 @@ namespace Generator
         //I made this function so that if I need to repeat a function x amount of times, it is easier for me to do so, so I do not have to repeat myself 
         //thinking on changing this function and hardcoding the calls to the functions. Not sure yet if this modularity is needed. 
         //I want to make sure that my code is as readable as possible. 
-        void repeatFunction(Action passedFunciton, Action secondFunction)
+        void repeatFunction()
         {
             const int passes = 5;
 
             for (int i = 0; i < passes; ++i)
             {
-                passedFunciton();
-                secondFunction();
+                transitionThroughMap();
+                tranferMapData();
             }
         }
 
@@ -193,7 +194,10 @@ namespace Generator
             mapGeneration();
             System.Random rng = generateSeed();
             fillMap(rng);
-            repeatFunction(transitionThroughMap,tranferMapData);
+            repeatFunction();
+           MeshGenerator meshGenerator = GetComponent<MeshGenerator>();
+
+          meshGenerator.meshGenerationFunction(map, 1);
             
             
 
@@ -207,7 +211,9 @@ namespace Generator
                 mapGeneration();
                 System.Random rng = generateSeed();
                 fillMap(rng);
-                repeatFunction(transitionThroughMap, tranferMapData);
+                repeatFunction();
+                
+
             }
 
         }

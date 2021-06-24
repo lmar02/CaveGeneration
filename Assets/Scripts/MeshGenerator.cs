@@ -1,18 +1,29 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeshGenerator : MonoBehaviour
+namespace Node
 {
-    // Start is called before the first frame update
-    void Start()
+    public class MeshGenerator : MonoBehaviour
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        private GridOfSquares squareGrid;
+
+        public void meshGenerationFunction(int[,] mapArray, float size)
+        {
+            squareGrid = new GridOfSquares(mapArray, size);
+        }
+        // Start is called before the first frame update
+        void Start()
+        {
+
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+
+        }
     }
 }
