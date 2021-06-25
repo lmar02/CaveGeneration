@@ -167,7 +167,7 @@ namespace Generator
         
 
         //for debugging to make sure the generator is working propertly. uncomment for debugging purposes
-        
+        /*
         void OnDrawGizmos()
         {
             if(map!=null)
@@ -185,7 +185,7 @@ namespace Generator
                     }
                 }
             }
-        }
+        }*/
         
 
         // Start is called before the first frame update
