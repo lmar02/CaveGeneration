@@ -23,7 +23,7 @@ namespace Node
             right = new Node(getPosition() + ((Vector3.right * squareSize) / 2));
         }
 
-        //these to funcitons are here to access the private varriables of the class
+        //these to funcitons are here to access the private variables of the class
         public Node getAboveNode()
         {
             return above;
