@@ -19,7 +19,7 @@ namespace Generator
         private const int arrayY = 100;
 
         //a void funciton to create the initial array
-        void mapGeneration()
+        void MapGeneration()
         {
             map = new int[arrayX, arrayY];
             tempMap = new int[arrayX, arrayY];
@@ -30,7 +30,7 @@ namespace Generator
         private string seed = "cats are great 12345";
         private bool useRandomSeed = true;
 
-        System.Random generateSeed()
+        System.Random GenerateSeed()
         {
             if (useRandomSeed)
             {
@@ -45,7 +45,7 @@ namespace Generator
         //This integer allows me to adjust the percentage of the map that is filled by walls
         private int randomFillPercent = 45;
         //this uses the informaiton from seed to fill the map appropriately. 
-        void fillMap(System.Random rng)
+        void FillMap(System.Random rng)
         {
             for (int x = 0; x < arrayX; ++x)
             {
@@ -66,31 +66,31 @@ namespace Generator
         //I made this function so that if I need to repeat a function x amount of times, it is easier for me to do so, so I do not have to repeat myself 
         //thinking on changing this function and hardcoding the calls to the functions. Not sure yet if this modularity is needed. 
         //I want to make sure that my code is as readable as possible. 
-        void repeatFunction()
+        void RepeatFunction()
         {
             const int passes = 5;
 
             for (int i = 0; i < passes; ++i)
             {
-                transitionThroughMap();
-                tranferMapData();
+                TransitionThroughMap();
+                TranferMapData();
             }
         }
 
         //this funciton goes through the map and calls findNeighborWalls
-        void transitionThroughMap()
+        void TransitionThroughMap()
         {
             for (int x = 0; x < arrayX; ++x)
             {
                 for (int y = 0; y < arrayY; ++y)
                 {
-                    findNeighborWalls(x, y);
+                    FindNeighborWalls(x, y);
                 }
             }
         }
 
         //this fucntion finds the neighbor walls of a specific wall
-        void findNeighborWalls(int x, int y)
+        void FindNeighborWalls(int x, int y)
         {
 
             int neightborwalls = 0;
@@ -125,14 +125,14 @@ namespace Generator
         
     
 
-            smooth(neightborwalls, x, y);
+            Smooth(neightborwalls, x, y);
 
         }
 
         //this function checks to see how many neighbors were produced and determines what maps needs to be adjusted too. 
         //this const int is going to be used to allow for adjustements of the smooth function. 
         const int determinationNumber = 4;
-        void smooth(int neighbors, int x, int y)
+        void Smooth(int neighbors, int x, int y)
         {
              
             if (x == 0 || x == arrayX - 1 || y == 0 || y == arrayY - 1)
@@ -154,7 +154,7 @@ namespace Generator
         }
 
         //transfer data from tempMap back to maps
-        void tranferMapData()
+        void TranferMapData()
         {
             for (int x = 0; x < arrayX; ++x)
             {
@@ -191,13 +191,13 @@ namespace Generator
         // Start is called before the first frame update
         void Start()
         {
-            mapGeneration();
-            System.Random rng = generateSeed();
-            fillMap(rng);
-            repeatFunction();
-           MeshGenerator meshGenerator = GetComponent<MeshGenerator>();
+            MapGeneration();
+            System.Random rng = GenerateSeed();
+            FillMap(rng);
+            RepeatFunction();
+            MeshGenerator meshGenerator = GetComponent<MeshGenerator>();
 
-          meshGenerator.meshGenerationFunction(map, 1);
+            meshGenerator.meshGenerationFunction(map, 1);
             
             
 
@@ -208,10 +208,10 @@ namespace Generator
         {
             if(Input.GetMouseButtonDown(0))
             {
-                mapGeneration();
-                System.Random rng = generateSeed();
-                fillMap(rng);
-                repeatFunction();
+                MapGeneration();
+                System.Random rng = GenerateSeed();
+                FillMap(rng);
+                RepeatFunction();
                 
 
             }

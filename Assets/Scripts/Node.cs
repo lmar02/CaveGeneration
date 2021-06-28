@@ -22,16 +22,16 @@ namespace Node
             
         }
 
-        public Vector3 getPosition()
+        public Vector3 GetPosition()
         {
             return position;
         }
 
-        public void setIndex(int index)
+        public void SetIndex(int index)
         {
             this.index = index;
         }
-        public int getIndex()
+        public int GetIndex()
         {
             return index;
         }

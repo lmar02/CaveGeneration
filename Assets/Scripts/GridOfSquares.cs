@@ -10,9 +10,9 @@ namespace Node
     class GridOfSquares
     {
         //have these varibales public just for testing
-        public Square[,] squares;
-        public int[,] map;
-        public ControlNode[,] controlNodes;
+        private Square[,] squares;
+        private int[,] map;
+        private ControlNode[,] controlNodes;
         private float squareSize;
 
 
@@ -39,13 +39,13 @@ namespace Node
                 }
             }
            
-            createControlNode();
-            createSquareArray();
+            CreateControlNode();
+            CreateSquareArray();
 
         }
 
         //This function creates the ControlNode array. 
-        void createControlNode()
+        void CreateControlNode()
         {
             
 
@@ -72,7 +72,7 @@ namespace Node
         }
 
         //this creates the array of squares 
-        void createSquareArray()
+        void CreateSquareArray()
         {
             //I subtract one from lengths to make sure that we do not go outside of bounds of the other array. 
             squares = new Square[yLength-1, xLength-1];
@@ -88,6 +88,13 @@ namespace Node
                 }
             }
 
+        }
+
+        //these functions will be used to access the private variables. 
+
+        public Square GetSquare(int x, int y)
+        {
+            return squares[y, x];
         }
 
 

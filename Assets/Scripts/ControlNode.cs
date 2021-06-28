@@ -19,22 +19,23 @@ namespace Node
         public ControlNode(Vector3 positon, bool active, float squareSize):base(positon)
         {
             this.active = active;
-            above = new Node(getPosition() + ((Vector3.forward * squareSize) / 2f));
-            right = new Node(getPosition() + ((Vector3.right * squareSize) / 2));
+            above = new Node(GetPosition() + ((Vector3.forward * squareSize) / 2f));
+            right = new Node(GetPosition() + ((Vector3.right * squareSize) / 2));
         }
 
         //these to funcitons are here to access the private variables of the class
-        public Node getAboveNode()
+        public Node GetAboveNode()
         {
             return above;
         }
-        public Node getRightNode()
+        public Node GetRightNode()
         {
             return right;
         }
-        public bool checkIfActive()
+        public bool CheckIfActive()
         {
             return active;
         }
+        
     }
 }
