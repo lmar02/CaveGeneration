@@ -43,7 +43,7 @@ namespace Generator
         }
 
         //This integer allows me to adjust the percentage of the map that is filled by walls
-        private int randomFillPercent = 45;
+        private int randomFillPercent = 50;
         //this uses the informaiton from seed to fill the map appropriately. 
         void FillMap(System.Random rng)
         {
@@ -103,7 +103,7 @@ namespace Generator
             {
                 for (int hy = -1; hy <= yi; ++hy)
                 {
-                    if (x + lx == -1 || y + hy == -1 || x + lx == arrayX || y + hy == arrayY)
+                    if (x + lx == -1 || y + hy == -1 || x + lx >= arrayX || y + hy >= arrayY)
                     {
                         continue;
                     }
@@ -147,10 +147,7 @@ namespace Generator
             {
                 tempMap[x, y] = 1;
             }
-            else
-            {
-                tempMap[x, y] = map[x, y];
-            }
+            
         }
 
         //transfer data from tempMap back to maps

@@ -18,18 +18,19 @@ namespace Node
         private int configuration = 0;
 
 
-        public Square(ControlNode topLeft, ControlNode topRight, ControlNode bottomLeft, ControlNode bottomRight)
+        public Square(ControlNode topLeft, ControlNode topRight, ControlNode bottomRight, ControlNode bottomLeft)
         {
            
             this.topLeft     = topLeft;
             this.topRight    = topRight;
-            this.bottomLeft  = bottomLeft;
             this.bottomRight = bottomRight;
+            this.bottomLeft  = bottomLeft;
 
-            top =    topLeft.GetRightNode();
-            left =   bottomLeft.GetAboveNode();
-            right =  bottomRight.GetAboveNode();
+            top    = topLeft.GetRightNode();
+            right  = bottomRight.GetAboveNode();
             bottom = bottomLeft.GetRightNode();
+            left   = bottomLeft.GetAboveNode();
+            
 
             SetConfiguration();
 

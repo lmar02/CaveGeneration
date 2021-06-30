@@ -16,11 +16,11 @@ namespace Node
         private bool active;
         private Node above, right;
 
-        public ControlNode(Vector3 positon, bool active, float squareSize):base(positon)
+        public ControlNode(Vector3 pos, bool active, float squareSize):base(pos)
         {
             this.active = active;
-            above = new Node(GetPosition() + ((Vector3.forward * squareSize) / 2f));
-            right = new Node(GetPosition() + ((Vector3.right * squareSize) / 2));
+            above = new Node(position + ((Vector3.forward * squareSize) / 2f));
+            right = new Node(position + ((Vector3.right * squareSize) / 2));
         }
 
         //these to funcitons are here to access the private variables of the class

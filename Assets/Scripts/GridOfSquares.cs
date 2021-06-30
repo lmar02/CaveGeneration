@@ -31,11 +31,11 @@ namespace Node
             this.map = new int[yLength, xLength];
 
             //this transfers the contents of maps to the private map varriable of GridOfSquares
-           for(int y = 0; y < map.GetLength(1); ++y)
+           for(int x = 0; x < map.GetLength(1); ++x)
             {
-                for( int x = 0; x < map.GetLength(0); ++x)
+                for( int y = 0; y < map.GetLength(0); ++y)
                 {
-                    this.map[y, x] = map[y, x];
+                    this.map[x, y] = map[x, y];
                 }
             }
            
@@ -54,18 +54,18 @@ namespace Node
             float length = yLength * squareSize;
             
             // fully initializes the control node array to the proper size
-            controlNodes = new ControlNode[yLength, xLength];
+            controlNodes = new ControlNode[xLength, yLength];
 
             //goes step my step through the control node array and creates the proper control points base on maps stored information. 
-            for (int y = 0; y < map.GetLength(1); ++y)
+            for (int x = 0; x < xLength; ++x)
             {
-                for (int x = 0; x < map.GetLength(0); ++x)
+                for (int y = 0; y < yLength; ++y)
                 {
                    //creates a vector3 so that controlNode knows where it is located in the game. 
-                    Vector3 position = new Vector3(-width / 2 + y * squareSize + squareSize / 2, 0, -length / 2 + x * squareSize + squareSize / 2);
+                    Vector3 position = new Vector3(-width / 2 + x * squareSize + squareSize / 2, 0, -length / 2 + y * squareSize + squareSize / 2);
 
                     //creates the new controlnode, passes it the data, and saves it to the control node array
-                    controlNodes[y, x] = new ControlNode(position, map[y, x] == 1, squareSize);
+                    controlNodes[x, y] = new ControlNode(position, map[x, y] == 1, squareSize);
                 }
             }
 
@@ -75,15 +75,15 @@ namespace Node
         void CreateSquareArray()
         {
             //I subtract one from lengths to make sure that we do not go outside of bounds of the other array. 
-            squares = new Square[yLength-1, xLength-1];
+            squares = new Square[xLength-1, yLength-1];
 
-            for (int y = 0; y < yLength - 1; ++y)
+            for (int x = 0; x < xLength - 1; ++x)
             {
-                for (int x = 0; x < xLength - 1; ++x)
+                for (int y = 0; y < yLength - 1; ++y)
                 {
                     //this cycles through the array of squares, creates new square objects. Then it passes to the square objects the data of different control nodes that it needs to know about.
                     //Then it saves this data all into the squares array. 
-                    squares[y, x] = new Square(controlNodes[y, x + 1], controlNodes[x + 1, y + 1], controlNodes[x + 1, y], controlNodes[x, y]);
+                    squares[x, y] = new Square(controlNodes[x, y + 1], controlNodes[x + 1, y + 1], controlNodes[x + 1, y], controlNodes[x, y]);
 
                 }
             }
@@ -94,7 +94,7 @@ namespace Node
 
         public Square GetSquare(int x, int y)
         {
-            return squares[y, x];
+            return squares[x, y];
         }
 
         public int GetSizeOfGridX()

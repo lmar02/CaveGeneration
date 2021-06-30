@@ -21,9 +21,9 @@ namespace Node
 
             //steps through the square array in squareGrid and calles createTriablesfrom points.
 
-            for (int y = 0; y < squareGrid.GetSizeOfGridY(); ++y)
+            for (int x = 0; x < squareGrid.GetSizeOfGridX(); ++x)
             {
-                for (int x = 0; x < squareGrid.GetSizeOfGridX(); ++x)
+                for (int y = 0; y < squareGrid.GetSizeOfGridY(); ++y)
                 {
                     CreateTrianglesFromPoints(squareGrid.GetSquare(x,y));
                 }
@@ -31,12 +31,11 @@ namespace Node
 
 
             //this takes all the data that was created and uses it to caluclate the mesh of the walls. 
-            Mesh wallMesh = new Mesh();
-            wallMesh = GetComponent<MeshFilter>().mesh;
+            Mesh wallMesh = GetComponent<MeshFilter>().mesh;
 
             wallMesh.vertices = verticePoints.ToArray();
             wallMesh.triangles = triangles.ToArray();
-           // wallMesh.RecalculateNormals();
+            wallMesh.RecalculateNormals();
 
 
 
@@ -125,18 +124,22 @@ namespace Node
             if(nodes.Length >=3)
             {
                 CreateTriangles(nodes[0], nodes[1], nodes[2]);
+                
             }
             if(nodes.Length >= 4)
             {
                 CreateTriangles(nodes[0], nodes[2], nodes[3]);
+                
             }
             if(nodes.Length >= 5)
             {
                 CreateTriangles(nodes[0], nodes[3], nodes[4]);
+                
             }
             if(nodes.Length >= 6)
             {
                 CreateTriangles(nodes[0], nodes[4], nodes[5]);
+                
             }
         }
 
@@ -146,7 +149,7 @@ namespace Node
             { 
                 if( nodes[iterator].GetIndex() == -1)
                 {
-                    nodes[iterator].SetIndex(verticePoints.Count);
+                    nodes[iterator].SetIndex(verticePoints.Count);                    
                     verticePoints.Add(nodes[iterator].GetPosition());
                 }
             }
@@ -155,8 +158,9 @@ namespace Node
         private void CreateTriangles(Node a, Node b, Node c)
         {
             triangles.Add(a.GetIndex());
-            triangles.Add(b.GetIndex());
+            triangles.Add(b.GetIndex());            
             triangles.Add(c.GetIndex());
+            
         }
 
 
