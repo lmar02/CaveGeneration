@@ -14,7 +14,7 @@ namespace Node
         //have these variables public to make testing easier
         //I plan to to switch these back to private once testing is done. 
         private ControlNode topLeft, topRight, bottomLeft, bottomRight;
-        public Node top, left, right, bottom;
+        private Node top, left, right, bottom;
         private int configuration = 0;
 
 
@@ -31,12 +31,12 @@ namespace Node
             right =  bottomRight.GetAboveNode();
             bottom = bottomLeft.GetRightNode();
 
-            setConfiguration();
+            SetConfiguration();
 
 
         }
 
-        private void setConfiguration()
+        private void SetConfiguration()
         {
             if(topLeft.CheckIfActive())
             {
@@ -57,6 +57,10 @@ namespace Node
         }
 
         //functions meant so you can access the private variables of this class. 
+        public int GetConfiguration()
+        {
+            return configuration;
+        }
         public ControlNode GetTopLeft()
         {
             return topLeft;
@@ -65,7 +69,7 @@ namespace Node
         {
             return topRight;
         }
-        public ControlNode GetbottomRight()
+        public ControlNode GetBottomRight()
         {
             return bottomRight;
         }

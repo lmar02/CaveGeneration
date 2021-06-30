@@ -197,7 +197,7 @@ namespace Generator
             RepeatFunction();
             MeshGenerator meshGenerator = GetComponent<MeshGenerator>();
 
-            meshGenerator.meshGenerationFunction(map, 1);
+            meshGenerator.MeshGeneration(map, 1);
             
             
 

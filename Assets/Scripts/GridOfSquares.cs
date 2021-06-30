@@ -97,6 +97,15 @@ namespace Node
             return squares[y, x];
         }
 
+        public int GetSizeOfGridX()
+        {
+            return squares.GetLength(1);
+        }
+        public int GetSizeOfGridY()
+        {
+            return squares.GetLength(0);
+        }
+
 
     }
 

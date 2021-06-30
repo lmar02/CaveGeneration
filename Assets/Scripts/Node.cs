@@ -13,7 +13,7 @@ namespace Node
     class Node
     {
         private Vector3 position;
-        private int index = 0;
+        private int index = -1;
 
         public Node(Vector3 postion)
         {
