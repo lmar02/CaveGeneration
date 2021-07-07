@@ -52,13 +52,13 @@ namespace Node
                     break;
                 //One Point active in the square, all the possible solutions:
                 case 1:
-                    CreateMeshFromPoints(square.GetBottomNode(), square.GetBottomLeft(), square.GetLeftNode());
+                    CreateMeshFromPoints(square.GetLeftNode(), square.GetBottomNode(), square.GetBottomLeft());
                     break;
                 case 2:
-                    CreateMeshFromPoints(square.GetRightNode(), square.GetBottomRight(), square.GetBottomNode());
+                    CreateMeshFromPoints(square.GetBottomRight(), square.GetBottomNode(), square.GetRightNode());
                     break;
                 case 4:
-                    CreateMeshFromPoints(square.GetTopNode(), square.GetTopRight(), square.GetRightNode());
+                    CreateMeshFromPoints(square.GetTopRight(), square.GetRightNode(), square.GetTopNode());
                     break;
                 case 8:
                     CreateMeshFromPoints(square.GetLeftNode(), square.GetTopNode(), square.GetLeftNode());
@@ -143,7 +143,7 @@ namespace Node
             }
         }
 
-        void SetVerticePoints(Node[] nodes)
+        private void SetVerticePoints(Node[] nodes)
         {
             for(int iterator = 0; iterator <nodes.Length; ++iterator)
             { 
@@ -155,15 +155,91 @@ namespace Node
             }
         }
 
+
+        //variable / struct used in CreateTriables() and StoreTrianglesInDictionary()
+        private struct TriangleData
+        {
+            public int indexofA;
+            public int indexofB;
+            public int indexofC;
+
+            public TriangleData(int a, int b, int c)
+            {
+                indexofA = a;
+                indexofB = b;
+                indexofC = c;
+            }
+
+            public bool CheckIndexs(int index)
+            {
+                return (index == indexofA || index == indexofB || index == indexofC);
+            }
+
+
+
+        }
+
+        Dictionary<int, List<TriangleData>> dictionaryOfTriagles = new Dictionary<int, List<TriangleData>>();
+
         private void CreateTriangles(Node a, Node b, Node c)
         {
+            //stores each nodes index in list Triangles.
             triangles.Add(a.GetIndex());
             triangles.Add(b.GetIndex());            
             triangles.Add(c.GetIndex());
+
+            //creates a object of struct Triangle data to store the triangles indexes. 
+            TriangleData triangle = new TriangleData(a.GetIndex(), b.GetIndex(), c.GetIndex());
             
+            //stores each index of the given triangle. 
+            StoreTriangleInDictionary(triangle.indexofA, triangle);
+            StoreTriangleInDictionary(triangle.indexofB, triangle);
+            StoreTriangleInDictionary(triangle.indexofB, triangle);
         }
 
 
+        //this function takes a key, indexKey and a Triangle, then it checks to make sure that the IndexKey, if there is already on provided it stores the
+        //new triagle under that key in the triList, otherwise it addes a new key and a new list of triangleData to the dictionary. 
+        private void StoreTriangleInDictionary(int IndexKey, TriangleData triangle)
+        {
+            // first checking to see if this indexKey is in the dictionary, if it is it adds this traigle to that indexKey
+            if (dictionaryOfTriagles.ContainsKey(IndexKey))
+            {
+                dictionaryOfTriagles[IndexKey].Add(triangle);
+            }
+            else
+            {
+                // this creates a list of triangledata, that is then added to the dictionary.
+                List<TriangleData> triList = new List<TriangleData>();
+                triList.Add(triangle);
+
+                dictionaryOfTriagles.Add(IndexKey, triList);
+            }
+        }
+
+        //this takes two indexs, and determines if the line that these indexs creates is shared by any triangles. 
+        //if this line is shared between multiple triangles than it return false. 
+        //otherwise it returns true if there is only one triangle. 
+        bool IsLineTheEdge(int indexA, int indexB)
+        {
+            List<TriangleData> listOfTrianglesWithindexA = dictionaryOfTriagles[indexA];
+            int sharedTriangleCount = 0;
+
+            for(int i =0; i < listOfTrianglesWithindexA.Count; ++i)
+            {
+                if(listOfTrianglesWithindexA[i].CheckIndexs(indexB))
+                {
+                    ++sharedTriangleCount;
+                }
+                if (sharedTriangleCount > 1)
+                {
+                    break;
+                }
+            }
+            return sharedTriangleCount == 1;
+        }
+
+        
         // Start is called before the first frame update
         void Start()
         {
@@ -180,42 +256,6 @@ namespace Node
 
 
         
-        //creating a gizmos method to make sure my code is working
-        /*
-        void OnDrawGizmos()
-        {
-            if (squareGrid != null)
-            {
-                for (int x = 0; x < 99; ++x)
-                {
-                    for (int y = 0; y < 99; ++y)
-                    {
-                        //this creates small squares to make sure that the array is populating correctly. 
-                        //the reason the vector is create in this way is purely becaues I like the way it looks with the x,y,z axis controls of the empyty object holding this script to be centered,
-                        //within the printed gizmo
-                        //If I need to activate this again remember to change the code, since I added the new funcitons. 
-                        Gizmos.color = (squareGrid.GetSquare(x, y).GetTopLeft().CheckIfActive()) ? Color.black : Color.white;
-                        Gizmos.DrawCube(squareGrid.GetSquare(x, y).GetTopLeft().GetPosition(), Vector3.one * 0.5f);
-
-                        Gizmos.color = (squareGrid.GetSquare(x, y).GetTopRight().CheckIfActive()) ? Color.black : Color.white;
-                        Gizmos.DrawCube(squareGrid.GetSquare(x, y).GetTopRight().GetPosition(), Vector3.one * 0.5f);
-
-                        Gizmos.color = (squareGrid.GetSquare(x, y).GetBottomLeft().CheckIfActive()) ? Color.black : Color.white;
-                        Gizmos.DrawCube(squareGrid.GetSquare(x, y).GetBottomLeft().GetPosition(), Vector3.one * 0.5f);
-
-                        Gizmos.color = (squareGrid.GetSquare(x, y).GetBottomLeft().CheckIfActive()) ? Color.black : Color.white;
-                        Gizmos.DrawCube(squareGrid.GetSquare(x, y).GetBottomLeft().GetPosition(), Vector3.one * 0.5f);
-
-                        Gizmos.color = Color.green;
-                        Gizmos.DrawCube(squareGrid.GetSquare(x, y).GetTopNode().GetPosition(), Vector3.one * 0.1f);
-                        Gizmos.DrawCube(squareGrid.GetSquare(x, y).GetRightNode().GetPosition(), Vector3.one * 0.1f);
-                        Gizmos.DrawCube(squareGrid.GetSquare(x, y).GetBottomNode().GetPosition(), Vector3.one * 0.1f);
-                        Gizmos.DrawCube(squareGrid.GetSquare(x, y).GetLeftNode().GetPosition(), Vector3.one * 0.1f);
-
-                    }
-                }
-            }
-        }*/
 
 
     }

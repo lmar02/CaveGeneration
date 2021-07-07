@@ -98,7 +98,7 @@ namespace Generator
             const int xi = 1;
             const int yi = 1;
 
-
+            //cycles through the map and for each cell in the map determintes how many of its surrounding 8 neightbors are walls. 
             for (int lx = -1; lx <= xi; ++lx)
             {
                 for (int hy = -1; hy <= yi; ++hy)
@@ -124,7 +124,7 @@ namespace Generator
             }
         
     
-
+            //sends the gathered information to Smooth() to then determine if map[x,y] will remain its current value or change. 
             Smooth(neightborwalls, x, y);
 
         }
@@ -161,6 +161,33 @@ namespace Generator
                 }
             }
         }
+
+        //this adds a nice border around the map so that we can make sure that there are no openings between the designated map
+        //and the outside area of the world. 
+        //This takes a new int array borderMap, and then for loops through the original map to generate the new map.
+
+        int borderSize = 3;
+        int[,] borderdMap;
+        void checkForBorder()
+        {
+           
+            borderdMap = new int[arrayX + borderSize * 2, arrayY + borderSize * 2];
+
+            for(int x = 0; x < borderdMap.GetLength(0); ++x)
+            {
+                for(int y = 0; y < borderdMap.GetLength(1); ++y)
+                {
+                    if(x >= borderSize && x < (arrayX + borderSize) && y >= borderSize && y < (arrayY + borderSize))
+                    {
+                        borderdMap[x, y] = map[x - borderSize, y - borderSize];
+                    }
+                    else
+                    {
+                        borderdMap[x, y] = 1;
+                    }
+                }
+            }
+        }
         
 
         //for debugging to make sure the generator is working propertly. uncomment for debugging purposes
@@ -192,9 +219,11 @@ namespace Generator
             System.Random rng = GenerateSeed();
             FillMap(rng);
             RepeatFunction();
-            MeshGenerator meshGenerator = GetComponent<MeshGenerator>();
+            checkForBorder();
 
-            meshGenerator.MeshGeneration(map, 1);
+
+            MeshGenerator meshGenerator = GetComponent<MeshGenerator>();
+            meshGenerator.MeshGeneration(borderdMap, 1);
             
             
 
