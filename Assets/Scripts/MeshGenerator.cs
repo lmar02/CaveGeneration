@@ -157,18 +157,36 @@ namespace Node
 
 
         //variable / struct used in CreateTriables() and StoreTrianglesInDictionary()
+        //using an indexer so that I can easily cycle through the ints stored in the struct. 
         private struct TriangleData
         {
             public int indexofA;
             public int indexofB;
             public int indexofC;
+            public int[] indexer;
 
             public TriangleData(int a, int b, int c)
             {
                 indexofA = a;
                 indexofB = b;
                 indexofC = c;
+
+                indexer = new int[3];
+                indexer[0] = a;
+                indexer[1] = b;
+                indexer[2] = c;
+
             }
+
+            public int this[int i]
+            {
+                get
+                {
+                    return indexer[i];
+                }
+
+            }
+
 
             public bool CheckIndexs(int index)
             {
@@ -179,7 +197,15 @@ namespace Node
 
         }
 
+
+        //stores all of the lists of triable data for a specific index. 
         Dictionary<int, List<TriangleData>> dictionaryOfTriagles = new Dictionary<int, List<TriangleData>>();
+
+        //used to peek a list of int lists that represent all the outlines of the mesh.
+        List<List<int>> outlines = new List<List<int>>();
+
+        //this is used to make sure that once we check a index/vertice that we do not check it agian. 
+        HashSet<int> checkedIndex = new HashSet<int>();
 
         private void CreateTriangles(Node a, Node b, Node c)
         {
@@ -194,7 +220,7 @@ namespace Node
             //stores each index of the given triangle. 
             StoreTriangleInDictionary(triangle.indexofA, triangle);
             StoreTriangleInDictionary(triangle.indexofB, triangle);
-            StoreTriangleInDictionary(triangle.indexofB, triangle);
+            StoreTriangleInDictionary(triangle.indexofC, triangle);
         }
 
 
@@ -216,11 +242,61 @@ namespace Node
                 dictionaryOfTriagles.Add(IndexKey, triList);
             }
         }
+        private void CalculateMeshOutline()
+        {
+            for(int vertex = 0; vertex < verticePoints.Count; ++vertex)
+            {
+                if(!checkedIndex.Contains(vertex))
+                {
+                    int newOutlineVertex = GetConnectedOutline(vertex);
+
+                    if(newOutlineVertex != -1)
+                    {
+                        checkedIndex.Add(vertex);
+                        List<int> newOutline = new List<int>();
+
+                        newOutline.Add(vertex);
+
+                        outlines.Add(newOutline);
+
+
+                    }
+                }
+            }
+        }
+
+        //this function creates a list of triangles depending on the index key. then uses a for loop to check each triangle 
+        //then it loops through all the vertexes in the triangle and checks them against vertex b. 
+        // if it is the same it skips calling isLinetheEdge, if isLineTheEdge returns true than it returns indexB
+        private int GetConnectedOutline(int indexKey)
+        {
+            List<TriangleData> trianglesContainingIndexKey = dictionaryOfTriagles[indexKey];
+
+            for(int i = 0; i < trianglesContainingIndexKey.Count; ++i)
+            {
+                TriangleData triangle = trianglesContainingIndexKey[i];
+
+                for(int j = 0; j < 3; ++j)
+                {
+                    int indexB = triangle[j];
+
+                    if ( indexB!= indexKey)
+                    {
+                        if (IsLineTheEdge(indexKey, indexB))
+                        {
+                            return indexB;
+                        }
+                    }
+                }
+
+            }
+            return -1;
+        }
 
         //this takes two indexs, and determines if the line that these indexs creates is shared by any triangles. 
         //if this line is shared between multiple triangles than it return false. 
         //otherwise it returns true if there is only one triangle. 
-        bool IsLineTheEdge(int indexA, int indexB)
+        private bool IsLineTheEdge(int indexA, int indexB)
         {
             List<TriangleData> listOfTrianglesWithindexA = dictionaryOfTriagles[indexA];
             int sharedTriangleCount = 0;
