@@ -11,8 +11,16 @@ namespace Node
 
         private GridOfSquares squareGrid;
 
+        //Used to store the vectors of each point of the active noes of a given triangle, 
+        private List<Vector3> verticePoints;
+        private List<int> triangles;
+
         public void MeshGeneration(int[,] mapArray, float size)
         {
+            dictionaryOfTriagles.Clear();
+            outlines.Clear();
+            checkedIndex.Clear();
+
             squareGrid = new GridOfSquares(mapArray, size);
 
             // initialize the list variables
@@ -36,6 +44,52 @@ namespace Node
             wallMesh.vertices = verticePoints.ToArray();
             wallMesh.triangles = triangles.ToArray();
             wallMesh.RecalculateNormals();
+
+            CreateWallMesh();
+
+        }
+
+        //This function takes all the data in verticePoints and places it in its proper order inside wall verticies
+        //it also takes tartIndex and adds 0-3 to it to show which vertex of the trianlge it is adding to the list of wallTriangles. 
+        //then it takes that data and creates a mesh for the walls of the cave. 
+        void CreateWallMesh()
+        {
+            CalculateMeshOutline();
+
+            List<Vector3> wallVerticies = new List<Vector3>();
+            List<int> walltriangles = new List<int>();
+            Mesh wallMesh = new Mesh();
+            float wallHeight = 5.0f;
+
+            foreach(List<int> outline in outlines)
+            {
+                for(int i = 0; i <outline.Count - 1; ++i)
+                {
+                    int startIndex = wallVerticies.Count;
+
+                    wallVerticies.Add(verticePoints[outline[i]]);                            //top left
+                    wallVerticies.Add(verticePoints[outline[i+1]]);                          //top right
+                    wallVerticies.Add(verticePoints[outline[i]] - Vector3.up * wallHeight);    //bottom left
+                    wallVerticies.Add(verticePoints[outline[i+1]] - Vector3.up * wallHeight); // bottom Right
+
+                    walltriangles.Add(startIndex + 0);  //TopLeft
+                    walltriangles.Add(startIndex + 2); //BottomLeft
+                    walltriangles.Add(startIndex + 3); //BottomRight
+
+                    walltriangles.Add(startIndex + 3); //BottomRight
+                    walltriangles.Add(startIndex + 1); //TopRight
+                    walltriangles.Add(startIndex + 0); //TopLeft
+                }
+            }
+
+            wallMesh.vertices = wallVerticies.ToArray();
+            wallMesh.triangles = walltriangles.ToArray();
+
+            MeshFilter walls = GetComponent<MeshFilter>();
+            walls.mesh = wallMesh;
+
+
+
 
 
 
@@ -104,6 +158,10 @@ namespace Node
 
                 case 15:
                     CreateMeshFromPoints(square.GetTopLeft(), square.GetTopRight(), square.GetBottomRight(), square.GetBottomLeft());
+                    checkedIndex.Add(square.GetTopLeft().GetIndex());
+                    checkedIndex.Add(square.GetTopRight().GetIndex());
+                    checkedIndex.Add(square.GetBottomRight().GetIndex());
+                    checkedIndex.Add(square.GetBottomLeft().GetIndex());
                     break;
 
 
@@ -113,10 +171,9 @@ namespace Node
 
         }
 
-        //Used to store the vectors of each point of the active noes of a given triangle, 
-       private List<Vector3> verticePoints;
-       private List<int> triangles;
+        
         //this function has params to make sure that it accepts controlnodes as well as nodes
+        //the main purpose of this function is to create the individual triangles needed out of the nodes provided.
         private void CreateMeshFromPoints(params Node[] nodes)
         {
             SetVerticePoints(nodes);
@@ -143,6 +200,7 @@ namespace Node
             }
         }
 
+        //sets the index of the node to its proper location in verticePoints. 
         private void SetVerticePoints(Node[] nodes)
         {
             for(int iterator = 0; iterator <nodes.Length; ++iterator)
@@ -242,6 +300,8 @@ namespace Node
                 dictionaryOfTriagles.Add(IndexKey, triList);
             }
         }
+        //this function goes through the verticepoints list, and connects the outline that the mesh will use. It also calls 
+        //FollowOutline which takes newOutlineVertex and outlines. 
         private void CalculateMeshOutline()
         {
             for(int vertex = 0; vertex < verticePoints.Count; ++vertex)
@@ -253,17 +313,31 @@ namespace Node
                     if(newOutlineVertex != -1)
                     {
                         checkedIndex.Add(vertex);
+
                         List<int> newOutline = new List<int>();
-
                         newOutline.Add(vertex);
-
                         outlines.Add(newOutline);
-
-
+                        FollowOutline(newOutlineVertex, outlines.Count - 1);
+                        outlines[outlines.Count - 1].Add(vertex);
                     }
                 }
             }
         }
+        
+        //this is a recersive function that continues and finds the full outline of a specific section of map until it has nowhere to go. As it goes through the outline it addes it to outlines which is a list<list<int>>. It also adds it to the hash called checkedIndex
+        void FollowOutline(int vertexIndex, int outlineIndex)
+        {
+            outlines[outlineIndex].Add(vertexIndex);
+            checkedIndex.Add(vertexIndex);
+
+            int nextVertexIndex = GetConnectedOutline(vertexIndex);
+
+            if (nextVertexIndex != -1)
+            {
+                FollowOutline(nextVertexIndex, outlineIndex);
+            }
+        }
+
 
         //this function creates a list of triangles depending on the index key. then uses a for loop to check each triangle 
         //then it loops through all the vertexes in the triangle and checks them against vertex b. 
@@ -280,7 +354,7 @@ namespace Node
                 {
                     int indexB = triangle[j];
 
-                    if ( indexB!= indexKey)
+                    if ( indexB != indexKey && !checkedIndex.Contains(indexB))
                     {
                         if (IsLineTheEdge(indexKey, indexB))
                         {
