@@ -37,13 +37,14 @@ namespace Node
                 }
             }
 
+            /*
 
             //this takes all the data that was created and uses it to caluclate the mesh of the walls. 
             Mesh wallMesh = GetComponent<MeshFilter>().mesh;
 
             wallMesh.vertices = verticePoints.ToArray();
             wallMesh.triangles = triangles.ToArray();
-            wallMesh.RecalculateNormals();
+            wallMesh.RecalculateNormals();*/
 
             CreateWallMesh();
 
@@ -59,7 +60,7 @@ namespace Node
             List<Vector3> wallVerticies = new List<Vector3>();
             List<int> walltriangles = new List<int>();
             Mesh wallMesh = new Mesh();
-            float wallHeight = 5.0f;
+            float wallHeight = 5;
 
             foreach(List<int> outline in outlines)
             {
@@ -158,10 +159,11 @@ namespace Node
 
                 case 15:
                     CreateMeshFromPoints(square.GetTopLeft(), square.GetTopRight(), square.GetBottomRight(), square.GetBottomLeft());
+                    /*
                     checkedIndex.Add(square.GetTopLeft().GetIndex());
                     checkedIndex.Add(square.GetTopRight().GetIndex());
                     checkedIndex.Add(square.GetBottomRight().GetIndex());
-                    checkedIndex.Add(square.GetBottomLeft().GetIndex());
+                    checkedIndex.Add(square.GetBottomLeft().GetIndex())*/
                     break;
 
 
